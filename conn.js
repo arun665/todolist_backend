@@ -28,8 +28,7 @@ module.exports = User;
 
 const mongoose = require('mongoose');
 
-
-mongoose.connect("mongodb://127.0.0.1:27017/st3_blogsite")
+mongoose.connect("mongodb+srv://mongodb:Arun1117@cluster0.spwl1.mongodb.net/mongodbtodolist?retryWrites=true&w=majority",{useNewUrlParser:true , useUnifiedTopology:true})
 .then(function(){
     console.log(" this is running successfully");
 })
@@ -39,21 +38,19 @@ mongoose.connect("mongodb://127.0.0.1:27017/st3_blogsite")
 });
 
 const user = new mongoose.Schema({
-    title:{
-    type:String
+    username:{
+    type:String,unique:true
 },
-description:{
+quote:{
     type:String}
 ,
-author:{
-    type:String
-}
+
 })
 
 
 
 
-const User = mongoose.model('Blogs', user);
+const User = mongoose.model('Quotes', user);
 
 
 

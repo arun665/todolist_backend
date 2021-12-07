@@ -3,27 +3,41 @@ const app=express();
 var flash = require('connect-flash');
 var bodyParser = require('body-parser');
 const cookieParser=require('cookie-parser'); 
-app.use(cookieParser());
-app.set('view engine', 'ejs');
-app.set('views','./views');
+//app.use(cookieParser());
+//app.set('view engine', 'ejs');
+//app.set('views','./views');
 const User = require('./conn');
 const mongoose=require('mongoose');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json())
+const cors = require('cors')
 
+
+app.use(cors())
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept,Authorization"
+    );
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,PATCH,POST,DELETE,OPTIONS');
+    next();
+  });
  var session = require('express-session')
 
 
-const passport =require('passport');
-const LocalStrategy=require("passport-local");
+//const passport =require('passport');
+//const LocalStrategy=require("passport-local");
 
 var msg="";
 
 app.get("/",async function(req,res){
     try{
     var data= await User.find();
-res.render('home',{"msg":"" , "blogs":data});
+res.send({"blogs":data});
 
     }
     catch(err){
@@ -32,7 +46,7 @@ res.send(err);
 })
 
 app.get("/add",function(req,res){
-    res.render('add');
+    res.send('add');
     })
     
 
@@ -42,14 +56,13 @@ app.post("/add", async function(req,res){
    
 
     try{
-var title=req.body.title;
-var description=req.body.description;
-var author=req.body.author;
+console.log("called");
+var quote=req.body.quote;
+var username=req.body.username;
 
 const blog=new User({
-    title:title,
-    description:description,
-    author:author
+ quote:quote,
+ username:username
 }
 );
 
@@ -60,7 +73,7 @@ var data=await User.find();
 
 console.log(data);
 
-res.redirect("/");
+res.json({"status":true});
 
 
 
@@ -89,7 +102,7 @@ res.redirect("/");
     
 console.log("Deleted")
     
-res.redirect("/");
+res.json({"status":true});
 
     
     
@@ -109,7 +122,39 @@ res.redirect("/");
 
 
 
+    
+app.post("/edit_task/:id", async function(req,res){
+   
 
+    try{
+
+var id=req.params.id;
+
+
+var quote=req.body.quote;
+var username=req.body.username;
+  User.findByIdAndUpdate(id, { 
+     quote:quote ,
+    username:username }, function (err, docs) {
+    if (err){
+        console.log(err);
+    //   res.json({"status":false});
+
+    }
+    else{
+        console.log("Updated task : ", docs);
+        
+res.json({"status":true});
+    }
+});
+
+
+    }
+    catch(err){
+        res.send(err);
+    }
+
+    })
 
     
 app.get("/edit/:id", async function(req,res){
@@ -122,7 +167,7 @@ var id=req.params.id;
 var data=await User.findById(id);
 
 
-res.render("edit",{"title":data.title,"description":data.description,"author":data.author,"id":id});
+res.send({"username":data.username,"quote":data.quote});
 
 
 
@@ -141,7 +186,7 @@ res.render("edit",{"title":data.title,"description":data.description,"author":da
     
 
 
-        
+        /*
 app.post("/edit/:id", async function(req,res){
    
 
@@ -182,7 +227,7 @@ res.redirect("/");
 
     })
     
-
+*/
 
 app.listen(3000,()=>{
     console.log("sever running on port");
