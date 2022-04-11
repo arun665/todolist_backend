@@ -6,6 +6,7 @@ const cookieParser=require('cookie-parser');
 //app.use(cookieParser());
 //app.set('view engine', 'ejs');
 //app.set('views','./views');
+//aruns hamr amis best
 const User = require('./conn');
 const mongoose=require('mongoose');
 
